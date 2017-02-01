@@ -108,7 +108,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
     @Override
     public String getBotUsername() {
-        return "MyFirstBot";
+        return "MyFirstTelegramBot";
     }
 
     @Override
