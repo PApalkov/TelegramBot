@@ -2,9 +2,19 @@ import java.util.ArrayList;
 
 public class Group {
 
+    private String groupName;
     private ArrayList<User> group = new ArrayList<User>();
     private int questNum;
     private int taskNum;
+
+    public boolean contains(long chatId){
+        for (int i = 0; i < group.size(); i++) {
+            if (group.get(i).getChatId() == chatId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void addUser(User user){
         group.add(0, user);
@@ -18,13 +28,13 @@ public class Group {
         group.add(0, user);
     }
 
-    public void addUser(int index, int userId){
-        group.add(0, new User(userId));
+    public void addUser(int index, long chatId){
+        group.add(0, new User(chatId));
     }
 
-    public void delUser(int userId){
+    public void delUser(int chatId){
         for (int i = 0; i < group.size(); i++){
-            if (group.get(i).getUserId() == userId){
+            if (group.get(i).getChatId() == chatId){
                 group.remove(i);
             }
         }
@@ -58,10 +68,12 @@ public class Group {
         return group.get(index);
     }
 
-    protected void finalize(){
-        for (int i = group.size(); i > 0; i++) {
-            group.remove(i);
-        }
+    public String getGroupName() {
+        return groupName;
     }
 
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }
+

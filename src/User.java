@@ -1,29 +1,30 @@
+import org.telegram.telegrambots.api.objects.Update;
 
-public class User {
-    private int userId;
+public class User{
 
-    public User(int userId) {
-        this.userId = userId;
+    private long chatId;
+
+    public User(Update update){
+        this.chatId = update.getMessage().getChatId();
     }
 
-    public User(){
-        userId = 0;
+    public User(long chatId){
+        this.chatId = chatId;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public boolean equal(User user){
-        if (this.userId == user.userId){
+    public boolean equal(User user) {
+        if (this.chatId == user.chatId) {
             return true;
         }
         return false;
     }
 
+    public long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(int chatId) {
+        this.chatId = chatId;
+    }
 
 }
