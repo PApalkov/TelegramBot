@@ -7,12 +7,14 @@ public class Group {
     private int questNum;
     private int taskNum;
     private int step;
+    private Quest groupQuest;
 
     public Group() {
         this.groupName = "None";
         this.questNum = 0;
         this.taskNum = 0;
         this.step = 0;
+        this.groupQuest = null;
     }
 
     public Group(User user) {
@@ -21,6 +23,7 @@ public class Group {
         this.questNum = 0;
         this.taskNum = 0;
         this.step = 0;
+        this.groupQuest = null;
     }
 
     public Group(String groupName, ArrayList<User> group, int questNum, int taskNum, int step) {
@@ -29,6 +32,7 @@ public class Group {
         this.questNum = questNum;
         this.taskNum = taskNum;
         this.step = step;
+        this.groupQuest = null;
     }
 
     public boolean contains(long chatId){
@@ -38,6 +42,14 @@ public class Group {
             }
         }
         return false;
+    }
+
+    public void addQuest(){
+        groupQuest = new Quest();
+    }
+
+    public void addQuest(long chatId){
+        groupQuest = new Quest(chatId);
     }
 
     public void addUser(User user){
@@ -107,6 +119,23 @@ public class Group {
     public void setStep(int step) {
         this.step = step;
     }
+
+    public ArrayList<User> getGroup() {
+        return group;
+    }
+
+    public void setGroup(ArrayList<User> group) {
+        this.group = group;
+    }
+
+    public Quest getGroupQuest() {
+        return groupQuest;
+    }
+
+    public void setGroupQuest(Quest groupQuest) {
+        this.groupQuest = groupQuest;
+    }
+
 
     public void remove(long chatId){
         for (int i = 0; i < group.size(); i++) {
