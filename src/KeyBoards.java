@@ -1,20 +1,31 @@
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KeyBoards {
 
-    public KeyBoards(){};
 
-    public ReplyKeyboardMarkup AloneOrGroupKeyboard(){
+    DBConnector db = new DBConnector();
+    private ArrayList<String> questNames;
+
+    public KeyBoards(){
+
+        try {
+            this.questNames = db.getAllQuestsName();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public ReplyKeyboardMarkup aloneOrGroupKeyboard(){
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
         keyboardMarkup.setSelective(true);
         keyboardMarkup.setResizeKeyboard(true);
-        keyboardMarkup.setOneTimeKeyboad(false);
+        keyboardMarkup.setOneTimeKeyboad(true);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -34,13 +45,12 @@ public class KeyBoards {
         return keyboardMarkup;
     }
 
-
-    public ReplyKeyboardMarkup MakeOrMadeQuest(){
+    public ReplyKeyboardMarkup makeOrMadeQuest(){
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
         keyboardMarkup.setSelective(true);
         keyboardMarkup.setResizeKeyboard(true);
-        keyboardMarkup.setOneTimeKeyboad(false);
+        keyboardMarkup.setOneTimeKeyboad(true);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -62,5 +72,27 @@ public class KeyBoards {
         return keyboardMarkup;
     }
 
+
+    public ReplyKeyboardMarkup showQuests(){
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        keyboardMarkup.setOneTimeKeyboad(true);
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        for (int i = 0; i < questNames.size(); i++) {
+
+            KeyboardRow keyboardRow = new KeyboardRow();
+            keyboardRow.add(questNames.get(i));
+            keyboard.add(keyboardRow);
+        }
+
+        keyboardMarkup.setKeyboard(keyboard);
+
+        return keyboardMarkup;
+    }
 
 }

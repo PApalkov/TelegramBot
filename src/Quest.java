@@ -1,34 +1,24 @@
 import java.util.ArrayList;
 
 public class Quest {
-    private String introMessage;
-    private int questID;
     private String questName;
+    private String introMessage;
     private ArrayList<Task> quest = new ArrayList<Task>();
 
-    public Quest(String introMessage, int questID, String questName, ArrayList<Task> quest) {
+    public Quest(String introMessage, String questName, ArrayList quest) {
         this.introMessage = introMessage;
-        this.questID = questID;
-        this.questName = questName;
         this.quest = quest;
-    }
-
-    public Quest(String questName) {
         this.questName = questName;
     }
 
-    // todo
+    public Quest(){
+        this.introMessage = "Quest Intro Message";
+        this.questName = "QuestName";
 
-    public int tasksNumbers() {
+    }
+
+    public int getTaskNumbers() {
         return quest.size();
-    }
-
-    public Task get(int i) {
-        return quest.get(i);
-    }
-
-    public int getQuestID() {
-        return questID;
     }
 
     public String getIntroMessage() {

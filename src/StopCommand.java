@@ -1,11 +1,11 @@
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
 
-public class StopCommand extends BotCommand{
+public class StopCommand extends BotCommand {
     private static final String LOGTAG = "STOPCOMMAND";
     private Participants participants;
 

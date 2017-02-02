@@ -16,6 +16,10 @@ import java.util.Collection;
 //public Collection<String> getAllQuestsName() - выходная коллекция содержит имена всех квестов
 //public Collection<String> getAllQuestsIntroMessage() - выходная коллекция содержит приветственное сообщение во всех квестах
 
+
+// ====================ГОДНЫЕ========================
+//public Quest getQuest(String questName)
+
 //завтра я перепишу код в более нормальный вид, сорян если что(
 
 public class DBConnector {
@@ -29,7 +33,7 @@ public class DBConnector {
         connectDB();
         createQuestsDB();
         createUsersDB();
-        createQuestsNamesDB();
+        createQuestsIntroMessagesDB();
     }
 
     // --------ПОДКЛЮЧЕНИЕ К БАЗЕ ДАННЫХ--------
@@ -54,20 +58,17 @@ public class DBConnector {
                 "'answer' text," +
                 "'loc_latitude' DOUBLE ," +
                 "'loc_longitude' DOUBLE ," +
-                "'questID' INT ," +
-                "'taskNumber' INT );");
+                "'questName' text);");
 
         System.out.println("Quest table is created or already exist.");
     }
 
-    private static void createQuestsNamesDB() throws ClassNotFoundException, SQLException
+    private static void createQuestsIntroMessagesDB() throws ClassNotFoundException, SQLException
     {
         statement = connection.createStatement();
-        statement.execute("CREATE TABLE if not exists 'quests_names' (" +
-                "'id' INTEGER PRIMARY KEY AUTOINCREMENT," +
+        statement.execute("CREATE TABLE if not exists 'quests_intro' (" +
                 "'questName' text," +
-                "'introMessage' text," +
-                "'questID' INT);");
+                "'introMessage' text);");
 
         System.out.println("Quests-names table is created or already exist.");
     }
@@ -85,15 +86,15 @@ public class DBConnector {
 
         System.out.println("Users table is created or already exist.\n");
     }
-
+/*
     public static void addQuest(Quest quest) throws SQLException {
         PreparedStatement stmt = null;
         try {
             int i=0;
-            while(i<quest.tasksNumbers()) {
+            while(i < quest.getTaskNumber()) {
                 stmt = connection.prepareStatement(
                         "INSERT INTO quests " +
-                                "(task, hint, photo, answer, loc_latitude, loc_longitude, questID) " +
+                                "(task, hint, photo, answer, loc_latitude, loc_longitude, questName) " +
                                 "VALUES (?, ?, ?, ?, ?, ?, ?)");
                 stmt.setString(1, quest.get(i).getTask());
                 stmt.setString(2, quest.get(i).getHint());
@@ -101,7 +102,7 @@ public class DBConnector {
                 stmt.setString(4, quest.get(i).getAnswer());
                 stmt.setDouble(5, quest.get(i).getLocation().getLatitude());
                 stmt.setDouble(6, quest.get(i).getLocation().getLongitude());
-                stmt.setInt(7, quest.getQuestID());
+                stmt.setString(7, quest.getQuestName());
                 stmt.execute();
                 ++i;
             }
@@ -111,13 +112,13 @@ public class DBConnector {
             }
         }
     }
-
-    public Collection<String> getAllQuestsName() throws SQLException {
+*/
+    public ArrayList<String> getAllQuestsName() throws SQLException {
         ResultSet rs = null;
-        Collection<String> names = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<String>();
         Statement stmt = statement;
         try {
-                rs = stmt.executeQuery("SELECT name FROM quests");
+                rs = stmt.executeQuery("SELECT questName FROM quests");
                 while (rs.next()) {
                     names.add(rs.getString(0));
                 }
@@ -145,7 +146,7 @@ public class DBConnector {
         }
         return introMessages;
     }
-
+/*
     public static void addUser(User current) throws SQLException {
         PreparedStatement stmt = null;
         try {
@@ -164,7 +165,8 @@ public class DBConnector {
             }
         }
     }
-
+*/
+/*
     public static Collection<Task> getAllQuests() throws ClassNotFoundException, SQLException
     {
         resultSet = statement.executeQuery("SELECT * FROM quests");
@@ -188,14 +190,14 @@ public class DBConnector {
                                 "photo: " + photo + "\n" +
                                 "answer: " + answer + "\n" +
                                 "location is (" + latitude + ", " + longitude + ")");
-            */
+
 
         }
 
         //System.out.println("End of quests table\n");
         return quests;
     }
-
+*/
 
     //todo: доделать этот метод, так как непонятно ничего с User потомучто овощ
     /*
@@ -224,7 +226,7 @@ public class DBConnector {
         //System.out.println("End of users table\n");
     }
     */
-
+/*
     public Collection<User> getUsersFromGroup(int groupID) throws SQLException {
         Collection<User> users = new ArrayList<>();
 
@@ -252,22 +254,29 @@ public class DBConnector {
 
         return users;
     }
-    /*
-    public Quest getQuest(String name) throws SQLException {
-        Quest quest = new Quest(name);
+*/
+
+    public Quest getQuest(String questName) throws SQLException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        Quest quest;
         try {
             stmt = connection.prepareStatement(
-                    "SELECT questID, introMessage" +
-                            "FROM quests_names " +
+                    "SELECT task, hint, photo, answer, loc_latitude, loc_longitude" +
+                            "FROM quests " +
                             "WHERE questName=?");
-            stmt.setString(1, name);
+            stmt.setString(1, questName);
             rs = stmt.executeQuery();
+            ArrayList<Task> tasks = new ArrayList<>();
             while (rs.next()) {
-                User st = new User(rs.getLong(0), rs.getString(1), rs.getString(2), groupID);
-                users.add(st);
+                tasks.add(new Task(rs.getString(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4), new Location(rs.getDouble(5), rs.getDouble(6))));
             }
+
+            stmt = connection.prepareStatement("SELECT introMessage FROM quests_intro WHERE questName=?");
+            stmt.setString(1, questName);
+            rs = stmt.executeQuery();
+            quest = new Quest(rs.getString(1), questName, tasks);
         } finally {
             if (rs != null) {
                 rs.close();
@@ -277,9 +286,11 @@ public class DBConnector {
             }
         }
 
-        return users;
+
+        return quest;
     }
-    */
+
+
 
     // --------Закрытие--------
     public static void closeDB() throws ClassNotFoundException, SQLException

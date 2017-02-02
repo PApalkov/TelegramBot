@@ -39,7 +39,7 @@ public class StartCommand extends BotCommand {
         String introMessage = getInroMessage();
 
         SendMessage message = new SendMessage();
-        message.setReplyMarkup(new KeyBoards().MakeOrMadeQuest());
+        message.setReplyMarkup(new KeyBoards().makeOrMadeQuest());
         message.setChatId(chat.getId().toString());
         message.setText(introMessage);
         try {

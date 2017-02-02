@@ -1,4 +1,3 @@
-import org.telegram.telegrambots.api.objects.Update;
 import java.util.ArrayList;
 
 
@@ -15,7 +14,7 @@ public class Participants {
     }
 
 
-    public Group getGroup(long chatId) throws Exception{
+    public Group getGroup(long chatId){
         Group group;
 
         for (int i = 0; i < participants.size(); i++){
@@ -23,7 +22,7 @@ public class Participants {
                 return participants.get(i);
             }
         }
-        throw new Exception("No such user");
+        return null;
     }
 
     public void add(long chatId){

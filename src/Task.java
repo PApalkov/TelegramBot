@@ -58,4 +58,3 @@ public class Task {
         this.location = location;
     }
 }
-
