@@ -47,9 +47,6 @@ public class StartCommand extends BotCommand {
         } catch (TelegramApiException e) {
             BotLogger.error(LOGTAG, e);
         }
-        //todo
-        //занести в базу
-
     }
 
 
@@ -59,7 +56,7 @@ public class StartCommand extends BotCommand {
 
         //todo
 
-        return "First Message";
+        return "Intro Text from file";
     }
 /*  //это код с интернета
         try(FileReader reader = new FileReader("C:\\SomeDir\\notes3.txt"))

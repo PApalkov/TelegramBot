@@ -5,10 +5,8 @@ import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
 
-/**
- * Created by pavel on 01.02.17.
- */
-public class HelpCommand extends BotCommand{
+
+public class HelpCommand extends BotCommand {
     private static final String LOGTAG = "HELPCOMMAND";
 
     public HelpCommand(String commandIdentifier, String description) {
@@ -22,11 +20,11 @@ public class HelpCommand extends BotCommand{
     @Override
     public void execute(AbsSender absSender, org.telegram.telegrambots.api.objects.User user, Chat chat, String[] strings) {
 
-        String introMessage = getHelpInfo();
+        String helpMessage = getHelpInfo();
 
         SendMessage answer = new SendMessage();
         answer.setChatId(chat.getId().toString());
-        answer.setText(introMessage);
+        answer.setText(helpMessage);
 
         try {
             absSender.sendMessage(answer);

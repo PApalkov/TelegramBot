@@ -32,7 +32,14 @@ public class Participants {
     }
 
 
-    //addToGroup
+    public void addToGroup(String groupName, long chatId){
+        for (int i = 0; i < participants.size(); i++) {
+            //привести и то и другое к нижнему регистру
+            if (participants.get(i).getGroupName().equals(groupName)){
+                participants.get(i).addUser(chatId);
+            }
+        }
+    }
 
     public void remove(long chatId) {
 
@@ -48,6 +55,36 @@ public class Participants {
                 break;
             }
         }
+    }
+
+
+    public void setGroupName(long chatId, String groupName) throws Exception{
+
+        for (int i = 0; i < participants.size(); i++){
+            //привести к нижнему регистру
+            if (participants.get(i).getGroupName().equals(groupName)){
+                throw new Exception("The name is alredy exists.");
+            }
+        }
+
+        for (int i = 0; i < participants.size(); i++){
+            if (participants.get(i).contains(chatId)){
+                participants.get(i).setGroupName(groupName);
+                break;
+            }
+        }
+    }
+
+
+    public boolean hasGroup(String group){
+
+        for (int i = 0; i < participants.size(); i++) {
+            //привести и то и другое к нижнему регистру
+            if (participants.get(i).getGroupName().equals(group)){
+                return true;
+            }
+        }
+        return false;
     }
 
     //todo

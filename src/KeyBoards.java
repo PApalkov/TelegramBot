@@ -7,6 +7,8 @@ import java.util.List;
 
 public class KeyBoards {
 
+    public KeyBoards(){};
+
     public ReplyKeyboardMarkup AloneOrGroupKeyboard(){
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
@@ -15,16 +17,23 @@ public class KeyBoards {
         keyboardMarkup.setOneTimeKeyboad(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow KeyboardRow = new KeyboardRow();
-        KeyboardRow.add("Один");
-        KeyboardRow.add("Команда");
 
-        keyboard.add(KeyboardRow);
+        KeyboardRow firstKeyboardRow = new KeyboardRow();
+        firstKeyboardRow.add("Один");
+        firstKeyboardRow.add("Команда");
+
+        KeyboardRow secondKeyboardRow = new KeyboardRow();
+        secondKeyboardRow.add("Назад");
+
+
+        keyboard.add(firstKeyboardRow);
+        keyboard.add(secondKeyboardRow);
+
         keyboardMarkup.setKeyboard(keyboard);
-
 
         return keyboardMarkup;
     }
+
 
     public ReplyKeyboardMarkup MakeOrMadeQuest(){
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
@@ -34,12 +43,20 @@ public class KeyBoards {
         keyboardMarkup.setOneTimeKeyboad(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow KeyboardRow = new KeyboardRow();
-        KeyboardRow.add("Пройти");
-        KeyboardRow.add("Создать");
 
-        keyboard.add(KeyboardRow);
+        KeyboardRow firstKeyboardRow = new KeyboardRow();
+        firstKeyboardRow.add("Пройти");
+        firstKeyboardRow.add("Создать");
+
+        KeyboardRow secondKeyboardRow = new KeyboardRow();
+        secondKeyboardRow.add("Присоединиться к команде");
+
+
+        keyboard.add(firstKeyboardRow);
+        keyboard.add(secondKeyboardRow);
+
         keyboardMarkup.setKeyboard(keyboard);
+
 
 
         return keyboardMarkup;

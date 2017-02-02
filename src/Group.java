@@ -48,7 +48,7 @@ public class Group {
         group.add(0, user);
     }
 
-    public void addUser(int userId){
+    public void addUser(long userId){
         group.add(0, new User(userId));
     }
 
