@@ -10,16 +10,18 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/telegrambots.jar!/" />
+          <root url="jar://$MODULE_DIR$/libraries/sqlite-jdbc-3.7.2.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/libraries/sqlite-jdbc-3.7.2.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/telegrambots-meta-2.4.4.4-jar-with-dependencies.jar!/" />
+          <root url="jar://$MODULE_DIR$/libraries/telegrambots.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

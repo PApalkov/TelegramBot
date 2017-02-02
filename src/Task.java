@@ -1,15 +1,20 @@
-import org.telegram.telegrambots.api.objects.Location;
-import org.telegram.telegrambots.api.objects.PhotoSize;
-
 public class Task {
 
     private String task;
     private String hint;
-    private PhotoSize photo;
+    private String photoPath;
     private String answer;
     private Location location;
 
-    public boolean checkAnswer(String answer){
+    public Task(String task, String hint, String photoPath, String answer, Location location) {
+        this.task = task;
+        this.hint = hint;
+        this.photoPath = photoPath;
+        this.answer = answer;
+        this.location = location;
+    }
+
+    public boolean checkAnswer(String answer) {
         return false;
     }
 
@@ -29,12 +34,12 @@ public class Task {
         this.hint = hint;
     }
 
-    public PhotoSize getPhoto() {
-        return photo;
+    public String getPhoto() {
+        return photoPath;
     }
 
-    public void setPhoto(PhotoSize photo) {
-        this.photo = photo;
+    public void setPhoto(String photo) {
+        this.photoPath = photo;
     }
 
     public String getAnswer() {
@@ -53,3 +58,4 @@ public class Task {
         this.location = location;
     }
 }
+

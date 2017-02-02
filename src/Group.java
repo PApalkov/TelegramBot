@@ -47,19 +47,21 @@ public class Group {
     public void addUser(User user){
         group.add(0, user);
     }
+/*
+    public void addUser(int userId){
 
     public void addUser(long userId){
         group.add(0, new User(userId));
     }
-
+*/
     public void addUser(int index, User user){
         group.add(0, user);
     }
-
+/*
     public void addUser(int index, long chatId){
         group.add(0, new User(chatId));
     }
-
+*/
     public void delUser(int chatId){
         for (int i = 0; i < group.size(); i++){
             if (group.get(i).getChatId() == chatId){
@@ -129,4 +131,5 @@ public class Group {
     }
 
 }
+
 
