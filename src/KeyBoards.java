@@ -13,10 +13,15 @@ public class KeyBoards {
     public KeyBoards(){
 
         try {
+            DBConnector.init();
             this.questNames = DBConnector.getAllQuestsName();
+            DBConnector.closeDB();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException b){
+            System.out.println(b.getMessage());
         }
+
     }
 
     public static ReplyKeyboardMarkup aloneOrGroupKeyboard(){
@@ -71,7 +76,20 @@ public class KeyBoards {
         return keyboardMarkup;
     }
 
-    public static ReplyKeyboardMarkup showQuests(){
+    public static ReplyKeyboardMarkup showQuests() {
+
+        ArrayList<String> questNames = new ArrayList<String>();
+
+        try {
+            DBConnector.init();
+            questNames = DBConnector.getAllQuestsName();
+            DBConnector.closeDB();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } catch (ClassNotFoundException b) {
+            System.out.println(b.getMessage());
+        }
+
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
@@ -81,13 +99,17 @@ public class KeyBoards {
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
-        for (int i = 0; i < questNames.size(); i++) {
-
+        if (questNames.size() == 0) {
             KeyboardRow keyboardRow = new KeyboardRow();
-            keyboardRow.add(questNames.get(i));
-            keyboard.add(keyboardRow);
-        }
+            keyboardRow.add("Назад");
+        } else {
+            for (int i = 0; i < questNames.size(); i++) {
 
+                KeyboardRow keyboardRow = new KeyboardRow();
+                keyboardRow.add(questNames.get(i));
+                keyboard.add(keyboardRow);
+            }
+        }
         keyboardMarkup.setKeyboard(keyboard);
 
         return keyboardMarkup;

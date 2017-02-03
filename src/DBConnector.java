@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DBConnector {
     private static final String DB_NAME = "DataBase.s3db";
@@ -62,10 +63,7 @@ public class DBConnector {
         statement = connection.createStatement();
         statement.execute("CREATE TABLE if not exists 'users' (" +
                 "'id' INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "'chatID' INTEGER," +
-                "'name' text," +
-                "'surname' text," +
-                "'groupID' INT);");
+                "'chatID' INTEGER);");
 
         System.out.println("Users table is created or already exist.\n");
     }
@@ -147,18 +145,13 @@ public class DBConnector {
     }
     */
 
-    /*
-    public static void addUser(User current) throws SQLException {
+
+    public static void addUser(User user) throws SQLException {
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(
-                    "INSERT INTO users " +
-                            "(chatID, name, surname, groupID) " +
-                            "VALUES (?, ?, ?, ?)");
-            stmt.setLong(1, current.getChatId());
-            stmt.setString(2, current.getName());
-            stmt.setString(3, current.getSurname());
-            stmt.setInt(4, current.getGroupID());
+                    "INSERT INTO users (chatID) VALUES (?) ");
+            stmt.setLong(1, user.getChatId());
             stmt.execute();
         } finally {
             if (stmt != null) {
@@ -166,7 +159,28 @@ public class DBConnector {
             }
         }
     }
-    */
+
+    public static ArrayList<User> getAllUsers() throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList<User> users = new ArrayList<>();
+        try {
+            stmt = connection.prepareStatement(
+                    "SELECT chatID FROM users");
+            stmt.execute();
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                users.add(new User(rs.getLong("chatID")));
+            }
+
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        return users;
+    }
 
     /*
     public static Collection<Task> getAllQuests() throws ClassNotFoundException, SQLException {
@@ -299,20 +313,48 @@ public class DBConnector {
         return quest;
     }
 
+    public static boolean containsQuest(String questName) throws SQLException {
+        Quest quest;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        boolean contains = false;
+        try {
+            stmt = connection.prepareStatement("SELECT questName FROM quests");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                System.out.println(rs.getString("questName"));
+                if (Objects.equals(rs.getString("questName"), questName)) {
+                    contains = true;
+                    break;
+                }
+            }
+
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return contains;
+    }
+
 
     // --------Закрытие--------
-    public static void closeDB() throws ClassNotFoundException, SQLException
-    {
+    public static void closeDB() throws ClassNotFoundException, SQLException {
         connection.close();
         statement.close();
         //resultSet.close();
 
         System.out.println("DB connection closed succesfully.");
     }
-
 /*
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         DBConnector.init();
+
         ArrayList<Task> list = new ArrayList<>();
         Task first_task = new Task(10, "first task", "My hint1", "My hint2", "My photo URL", "My answer",
                 new Location(55.55, 37.08));
@@ -330,19 +372,24 @@ public class DBConnector {
                 new Location(23.09, 26.19));
         list.add(myTask1);
         list.add(task1);
-        Quest quest1 = new Quest("this is quest 2 intro", "Quest name 2", list);
+        Quest quest1 = new Quest();
+        quest1.setQuest(list);
+        quest1.setQuestName("quest 2");
         DBConnector.addQuest(quest1);
         //DBConnector.addUser(new User(1488228, 15));
         //DBConnector.addUser(new User(2736134, 81));
-        //ArrayList<String> tasks = DBConnector.getAllQuestsName();
-        //for(int i=0; i<tasks.size(); ++i) {
-        //    System.out.println(tasks.get(i));
-        //}
+        ArrayList<String> tasks = DBConnector.getAllQuestsName();
+        for(int i=0; i<tasks.size(); ++i) {
+            System.out.println(tasks.get(i));
+        }
         //DBConnector.getUsersFromDB();
 
-        Quest quest2 = DBConnector.getQuest("Quest name 2");
 
-        System.out.println(quest2.getIntroMessage());
+        System.out.println(DBConnector.containsQuest("Quest name 1"));
+        System.out.println(DBConnector.containsQuest("Quest name 5"));
+
+        System.out.println(DBConnector.getQuest("quest 2").getIntroMessage().equals(null));
+
 
         DBConnector.closeDB();
 

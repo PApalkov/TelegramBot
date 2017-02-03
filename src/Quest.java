@@ -106,34 +106,7 @@ public class Quest {
             }
 
             case PHOTO:{
-/*
-                        List<PhotoSize> photos = message.getPhoto();
-PhotoSize maxSizePic = photos.stream().sorted(Comparator.comparing(PhotoSize::getFileSize).reversed()).findFirst().orElse(null);
 
-
-                    Objects.requireNonNull(maxSizePic);
-
-                    if (maxSizePic.hasFilePath()) { // If the file_path is already present, we are done!
-                        return photo.getFilePath();
-                    } else { // If not, let find it
-                        // We create a GetFile method and set the file_id from the photo
-                        GetFile getFileMethod = new GetFile();
-                        getFileMethod.setFileId(photo.getFileId());
-                        try {
-                            // We execute the method using AbsSender::getFile method.
-                            File file = getFile(getFileMethod);
-                            // We now have the file_path
-                            return file.getFilePath();
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    return null; // Just in case
-                }
-
-
-*/
                 break;
             }
 
@@ -149,21 +122,15 @@ PhotoSize maxSizePic = photos.stream().sorted(Comparator.comparing(PhotoSize::ge
         }
     }
 
-    public void saveQuest(){
-
-        this.currentMakingStep = NONE;
-        this.onCreating = false;
-        //todo
-    }
-
-    public void cancelMAkingQuest(){
-        //todo
+    public void addTask(){
+        int index = quest.size();
+        quest.add(index, new Task());
     }
 
     public void removeLastTask(){
-        //todo
+        int index = quest.size() - 1;
+        quest.remove(index);
     }
-
 
     public int getCurrentMakingStep() {
         return currentMakingStep;
@@ -216,17 +183,6 @@ PhotoSize maxSizePic = photos.stream().sorted(Comparator.comparing(PhotoSize::ge
     public void setInventorId(long inventorId) {
         this.inventorId = inventorId;
     }
-
-
-    /*private java.io.File downloadPhotoByFilePath(String filePath) {
-        try {
-            // Download the file calling AbsSender::downloadFile method
-            return AbsSender::getFile(filePath);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
 
 
     public Task getTask(int index){

@@ -1,6 +1,9 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Group {
+
+    DBConnector db = new DBConnector();
 
     private String groupName;
     private ArrayList<User> group = new ArrayList<User>();
@@ -56,8 +59,39 @@ public class Group {
         return groupQuest;
     }
 
-    public void setQuest(String string){
+    public void setQuest(Quest quest){
+        this.groupQuest = quest;
+    }
+
+    public void saveQuest() {
+
+        groupQuest.setCurrentMakingStep(Quest.NONE);
+        groupQuest.setOnCreating(false);
+        try {
+            DBConnector.init();
+            db.addQuest(groupQuest);
+            DBConnector.closeDB();
+        } catch (SQLException e) {
+            System.out.println("SAVING_QUEST_ERROR");
+        } catch (ClassNotFoundException b){
+            System.out.println(b.getMessage());
+        }
+
+        groupQuest = null;
+
         //todo
+    }
+
+    public void deleteQuest(){
+
+        groupQuest.setCurrentMakingStep(Quest.NONE);
+        groupQuest.setOnCreating(false);
+        groupQuest = null;
+
+    }
+
+    public void removeLastTask(){
+        groupQuest.removeLastTask();
     }
 
     public void addUser(User user){
@@ -160,6 +194,8 @@ public class Group {
 
         return false;
     }
+
+
 
 }
 

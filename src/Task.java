@@ -28,16 +28,16 @@ public class Task {
     }
 
     public Task(){
-        this.task = "Task";
-        this.hint1 = "Hint1";
-        this.hint2 = "Hint2";
-        this.photoPath = "PhotoPath";
-        this.answer = "Answer";
-        this.location = null;
+        this.task = null;
+        this.hint1 = null;
+        this.hint2 = null;
+        this.photoPath = null;
+        this.answer = null;
+        this.location = new Location();
     }
 
     public boolean checkAnswer(String answer) {
-        return false;
+        return this.answer.equals(answer);
     }
 
     public String getTask() {

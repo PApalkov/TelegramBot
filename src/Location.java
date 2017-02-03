@@ -9,6 +9,11 @@ public class Location {
         this.longitude = longitude;
     }
 
+    public Location(){
+        this.latitude = 0;
+        this.longitude = 0;
+    }
+
     public double getLongitude() {
         return longitude;
     }
