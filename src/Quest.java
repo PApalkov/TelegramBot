@@ -1,13 +1,8 @@
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.PhotoSize;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.bots.AbsSender;
-
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 
 public class Quest {
 

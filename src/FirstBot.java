@@ -1,4 +1,5 @@
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -46,7 +47,6 @@ public class FirstBot extends TelegramLongPollingCommandBot {
             }
         });
     }
-
 
     @Override
     public void processNonCommandUpdate(Update update) {
@@ -147,10 +147,8 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                         if (DBConnector.containsQuest(questName)){
                             players.getGroup(chatId).setQuest( DBConnector.getQuest(questName) );
                             players.getGroup(chatId).setStep(RUNNING_QUEST);
-
                             sendMessageHandle(chatId, players.getGroup(chatId).getQuest().getIntroMessage());
-                            sendTask(update);
-
+                            sendTask(update.getMessage());
                         }
                         DBConnector.closeDB();
                     } catch (SQLException e){
@@ -160,10 +158,6 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                     } catch (ClassNotFoundException b){
                         BotLogger.error(LOGTAG, b);
                     }
-
-                    //todo
-                    System.out.println("Got here");
-
 
                     break;
                 }
@@ -200,29 +194,56 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         int task_num = players.getGroup(chatId).getTaskNum();
         Task task = players.getGroup(chatId).getQuest().getTask(task_num);
 
-        String answer = message.getText();
-        String correct_answer = players.getGroup(chatId).getQuest().getTask(task_num).getAnswer();
+        String answer = message.getText().toLowerCase();
+        String correct_answer = players.getGroup(chatId).getQuest().getTask(task_num).getAnswer().toLowerCase();
 
-        //привести оба ответа к нижнему регистру
+
         if (answer.equals(correct_answer)){
-            sendMessageHandle(chatId, "Правильно!");
+            sentToAll(players.getGroup(chatId), "Член вашей группы ввел правильный ответ!");
+
             //todo сделать отправку всей группе сразу
 
             if (task_num == players.getGroup(chatId).getQuest().getTaskNumbers() - 1){
+
                 markUpSendMessageHandle(chatId, "Это было последнее задание!\nВы прошли квест!", KeyBoards.makeOrMadeQuest());
                 players.getGroup(chatId).deleteQuest();
                 players.getGroup(chatId).setStep(MAKE_OR_MADE_QUEST_SELECTION);
-
+                players.getGroup(chatId).setGroupName(null);
 
             } else {
                 players.getGroup(chatId).setTaskNum(task_num + 1);
+                sendTask(message);
             }
-
 
         } else {
             sendMessageHandle(chatId, "Неправильно!");
         }
 
+    }
+
+    public void sendTask(Message message){
+        long chatId = message.getChatId();
+
+        int task_num = players.getGroup(chatId).getTaskNum();
+        Task task = players.getGroup(chatId).getQuest().getTask(task_num);
+
+        if (task.containsTask())
+            sendMessageHandle(chatId, task.getTask());
+
+        if (task.containsPhoto()){
+            sendPhotoHandle(chatId, task.getPhotoPath());
+        }
+
+        //todo локацию
+    }
+
+    public void sentToAll(Group group, String text){
+        long chatId;
+
+        for (int i = 0; i < group.getSize(); i++) {
+            chatId = group.getUser(i).getChatId();
+            sendMessageHandle(chatId, text);
+        }
     }
 
     private int aloneOrGroup(Message message){
@@ -254,49 +275,56 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
     private int makeOrMadeQuest(Message message){
 
-        //Будет реализовано через switch/case
-        if (message.getText().equals("Пройти")) {
+        String text = message.getText();
 
-            markUpSendMessageHandle(message.getChatId(), "Вы будете один или в команде?", KeyBoards.aloneOrGroupKeyboard());
+        switch (text){
+            case "Пройти":{
 
-            return SINGLE_OR_GROUP_PLAYING_SELECTION;
+                markUpSendMessageHandle(message.getChatId(), "Вы будете один или в команде?", KeyBoards.aloneOrGroupKeyboard());
+                return SINGLE_OR_GROUP_PLAYING_SELECTION;
 
-        } else if(message.getText().equals("Создать")) {
+            }
 
-            long chatId = message.getChatId();
-            players.getGroup(chatId).addQuest(chatId);
-            players.getGroup(chatId).getQuest().setOnCreating(true);
+            case "Создать":{
 
-            markUpSendMessageHandle(chatId, "Введите название квеста.\nПо этому названию люди смогут его найти\n" +
-                    "Так же введите приветственное сообщение",
-                    KeyBoards.makingQuestKeyBoard());
+                long chatId = message.getChatId();
+                players.getGroup(chatId).addQuest(chatId);
+                players.getGroup(chatId).getQuest().setOnCreating(true);
 
-            return QUEST_FIELDS_SELECTION;
+                markUpSendMessageHandle(chatId, "Введите название квеста.\nПо этому названию люди смогут его найти\n" +
+                                "Так же введите приветственное сообщение",
+                        KeyBoards.makingQuestKeyBoard());
 
-        } else if(message.getText().equals("Присоединиться к команде")){
+                return QUEST_FIELDS_SELECTION;
+            }
 
-            sendMessageHandle(message.getChatId(), "Введите имя команды");
+            case "Присоединиться к команде":{
+                sendMessageHandle(message.getChatId(), "Введите имя команды");
+                return JOINING_EXISTING_GROUP;
 
-            return JOINING_EXISTING_GROUP;
+            }
 
-        } else {
+            case "Найти квест":{
+                sendMessageHandle(message.getChatId(), "Введите название квеста");
+                return CHOOSING_QUEST;
+            }
 
-            markUpSendMessageHandle(message.getChatId(), "Неверный выбор.\nПользуйтесь кнопками", KeyBoards.makeOrMadeQuest());
-
-            return MAKE_OR_MADE_QUEST_SELECTION;
+            default:{
+                markUpSendMessageHandle(message.getChatId(), "Неверный выбор.\nПользуйтесь кнопками", KeyBoards.makeOrMadeQuest());
+                return MAKE_OR_MADE_QUEST_SELECTION;
+            }
         }
-
     }
 
     private int joiningGroup(Message message){
         //сделать проверку на содержание текста в сообщении
+
         String gotGroupName = message.getText();
         if (players.hasGroup(gotGroupName)){
 
             players.addToGroup(gotGroupName, message.getChatId());
 
-            //todo
-            sendMessageHandle(message.getChatId(), "тут будет текущее задание квеста. пока введите любоц символ");
+            sendTask(message);
 
             return RUNNING_QUEST;
 
@@ -344,13 +372,29 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                 return TASK_FIELDS_SELECTION;
             }
             case "Готово": {
+                String questName = players.getGroup(chatId).getQuest().getQuestName();
+                boolean contains = false;
+                try {
+                    DBConnector.init();
+                    contains = DBConnector.containsQuest(questName);
+                    DBConnector.closeDB();
+                } catch (ClassNotFoundException e){
+                    BotLogger.error(LOGTAG, e);
+                }catch (SQLException e){
+                    BotLogger.error(LOGTAG, e);
+                }
 
-                markUpSendMessageHandle(chatId, "Вы создали квест: " + players.getGroup(chatId).getQuest().getQuestName(),
-                        KeyBoards.makeOrMadeQuest());
+                if (contains) {
+                    sendMessageHandle(chatId, "Такое название занято.\nВведите другое.");
+                }else{
+                    markUpSendMessageHandle(chatId, "Вы создали квест: " + players.getGroup(chatId).getQuest().getQuestName(),
+                            KeyBoards.makeOrMadeQuest());
 
-                players.getGroup(chatId).saveQuest();
+                    players.getGroup(chatId).saveQuest();
 
-                return MAKE_OR_MADE_QUEST_SELECTION;
+                    return MAKE_OR_MADE_QUEST_SELECTION;
+                }
+
             }
 
             case "Отменить": {
@@ -414,6 +458,15 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
             case "Готово":{
 
+                int taskNum = players.getGroup(chatId).getTaskNum();
+                String task = players.getGroup(chatId).getQuest().getTask(taskNum).getTask();
+                String answer = players.getGroup(chatId).getQuest().getTask(taskNum).getAnswer();
+
+                if ( (answer == null) || (task == null) ){
+                    markUpSendMessageHandle(chatId, "Не заполнены поля \"Задание\" или \"Ответ\"", KeyBoards.makingTasksKeyboayd());
+                    return TASK_FIELDS_SELECTION;
+                }
+
                 markUpSendMessageHandle(chatId, "Задание сохранено!",
                         KeyBoards.makingQuestKeyBoard());
                 players.getGroup(chatId).getQuest().setCurrentMakingStep(Quest.NONE);
@@ -467,16 +520,17 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    public void sendTask(Update update){
-        long chatId = update.getMessage().getChatId();
-
-        int task_num = players.getGroup(chatId).getTaskNum();
-        Task task = players.getGroup(chatId).getQuest().getTask(task_num);
-
-        sendMessageHandle(chatId, task.getTask());
-
-        //todo
+    public void sendPhotoHandle(long chatId, String photoPath){
+        SendPhoto sendPhoto1 = new SendPhoto();
+        sendPhoto1.setChatId(chatId);
+        sendPhoto1.setPhoto(photoPath);
+        try {
+            sendPhoto(sendPhoto1);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public String getBotUsername() {
@@ -490,5 +544,6 @@ public class FirstBot extends TelegramLongPollingCommandBot {
     public String getBotToken() {
         return "TOKEN";
     }
+
 }
 

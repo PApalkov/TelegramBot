@@ -7,14 +7,14 @@ public class Group {
 
     private String groupName;
     private ArrayList<User> group = new ArrayList<User>();
-    private int questNum;
+    private String questName;
     private int taskNum;
     private int step;
     private Quest groupQuest;
 
     public Group() {
         this.groupName = "None";
-        this.questNum = 0;
+        this.questName = "QuestName";
         this.taskNum = 0;
         this.step = 0;
         this.groupQuest = null;
@@ -23,16 +23,16 @@ public class Group {
     public Group(User user) {
         group.add(user);
         this.groupName = "None";
-        this.questNum = 0;
+        this.questName = "QuestName";
         this.taskNum = 0;
         this.step = 0;
         this.groupQuest = null;
     }
 
-    public Group(String groupName, ArrayList<User> group, int questNum, int taskNum, int step) {
+    public Group(String groupName, ArrayList<User> group, String questName, int taskNum, int step) {
         this.groupName = groupName;
         this.group = group;
-        this.questNum = questNum;
+        this.questName = "QuestName";
         this.taskNum = taskNum;
         this.step = step;
         this.groupQuest = null;
@@ -61,6 +61,7 @@ public class Group {
 
     public void setQuest(Quest quest){
         this.groupQuest = quest;
+        this.questName = quest.getQuestName();
     }
 
     public void saveQuest() {
@@ -87,6 +88,7 @@ public class Group {
         groupQuest.setCurrentMakingStep(Quest.NONE);
         groupQuest.setOnCreating(false);
         groupQuest = null;
+        questName = "QuestName";
 
     }
 
@@ -126,14 +128,13 @@ public class Group {
         }
     }
 
-    public int getQuestNum() {
-        return questNum;
+    public String getQuestName() {
+        return questName;
     }
 
-    public void setQuestNum(int questNum) {
-        this.questNum = questNum;
+    public void setQuestName(String questName) {
+        this.questName = questName;
     }
-
     public int getTaskNum() {
         return taskNum;
     }
@@ -178,6 +179,13 @@ public class Group {
         this.groupQuest = groupQuest;
     }
 
+    public int getSize(){
+        return group.size();
+    }
+
+    public User getUser(int index){
+        return group.get(index);
+    }
 
     public void remove(long chatId){
         for (int i = 0; i < group.size(); i++) {

@@ -95,4 +95,46 @@ public class Task {
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
     }
+
+    public boolean containsTask(){
+        if (task == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean containsHint1(){
+        if (hint1 == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean containsHint2(){
+        if (hint2 == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean containsPhoto(){
+        if (photoPath == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean containsLocation(){
+        if (photoPath == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
 }
