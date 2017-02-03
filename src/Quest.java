@@ -46,7 +46,7 @@ public class Quest {
     }
 
     public Quest(){
-        this.introMessage = "Quest Intro Message";
+        //this.introMessage = "Quest Intro Message";
         this.questName = "QuestName";
         this.onCreating = false;
         this.inventorId = 0;
@@ -106,7 +106,12 @@ public class Quest {
             }
 
             case PHOTO:{
-
+                int index = quest.size() - 1;
+                quest.get(index).setPhotoPath( message.getPhoto()
+                        .stream()
+                        .sorted(Comparator.comparing(PhotoSize::getFileSize).reversed())
+                        .findFirst()
+                        .orElse(null).getFileId());
                 break;
             }
 
