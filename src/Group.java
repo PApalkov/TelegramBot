@@ -52,6 +52,14 @@ public class Group {
         groupQuest = new Quest(chatId);
     }
 
+    public Quest getQuest(){
+        return groupQuest;
+    }
+
+    public void setQuest(String string){
+        //todo
+    }
+
     public void addUser(User user){
         group.add(0, user);
     }

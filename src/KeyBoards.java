@@ -93,8 +93,7 @@ public class KeyBoards {
         return keyboardMarkup;
     }
 
-    public static ReplyKeyboardMarkup makingQuestKeyboayd(){
-
+    public static ReplyKeyboardMarkup makingQuestKeyBoard(){
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
         keyboardMarkup.setSelective(true);
@@ -105,8 +104,40 @@ public class KeyBoards {
 
         KeyboardRow questNameKeyBoardRow = new KeyboardRow();
         questNameKeyBoardRow.add("Название квеста");
-        questNameKeyBoardRow.add("Приветственное сообщение");
 
+        KeyboardRow startMessageKeyBoard = new KeyboardRow();
+        startMessageKeyBoard.add("Приветственное сообщение");
+
+        KeyboardRow taskKeyBoard = new KeyboardRow();
+        taskKeyBoard.add("Добавить задание");
+
+        KeyboardRow readyKeyBoardRow = new KeyboardRow();
+        readyKeyBoardRow.add("Готово");
+
+        KeyboardRow backKeyboardRow = new KeyboardRow();
+        backKeyboardRow.add("Отменить");
+
+
+        keyboard.add(questNameKeyBoardRow);
+        keyboard.add(startMessageKeyBoard);
+        keyboard.add(taskKeyBoard);
+        keyboard.add(readyKeyBoardRow);
+        keyboard.add(backKeyboardRow);
+
+        keyboardMarkup.setKeyboard(keyboard);
+
+        return keyboardMarkup;
+    }
+
+    public static ReplyKeyboardMarkup makingTasksKeyboayd(){
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        keyboardMarkup.setOneTimeKeyboad(true);
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow firstKeyboardRow = new KeyboardRow();
         firstKeyboardRow.add("Задание");
@@ -129,6 +160,7 @@ public class KeyBoards {
         keyboard.add(firstKeyboardRow);
         keyboard.add(secondKeyboardRow);
         keyboard.add(thirdKeyboardRow);
+        keyboard.add(readyKeyBoardRow);
         keyboard.add(backKeyboardRow);
 
         keyboardMarkup.setKeyboard(keyboard);
