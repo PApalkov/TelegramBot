@@ -13,7 +13,7 @@ public class KeyBoards {
     public KeyBoards(){
 
         try {
-            this.questNames = DBhuector.getAllQuestsName();
+            this.questNames = DBConnector.getAllQuestsName();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

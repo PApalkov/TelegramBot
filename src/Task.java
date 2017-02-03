@@ -8,6 +8,15 @@ public class Task {
     private String answer;
     private Location location;
 
+    public Task(int taskNumber, String task, String hint1, String hint2, String photoPath, String answer, Location location) {
+        this.taskNumber = taskNumber;
+        this.task = task;
+        this.hint1 = hint1;
+        this.hint2 = hint2;
+        this.photoPath = photoPath;
+        this.answer = answer;
+        this.location = location;
+    }
 
     public Task(String task, String hint1, String hint2, String photoPath, String answer, Location location) {
         this.task = task;
@@ -53,14 +62,6 @@ public class Task {
 
     public void setHint2(String hint2) {
         this.hint2 = hint2;
-    }
-
-    public String getPhoto() {
-        return photoPath;
-    }
-
-    public void setPhoto(String photo) {
-        this.photoPath = photo;
     }
 
     public String getAnswer() {

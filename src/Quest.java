@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class Quest {
 
+
     public static final int NONE = 0;
     public static final int NAME = 1;
     public static final int INTRO_MESSAGE = 2;
@@ -30,12 +31,18 @@ public class Quest {
     private long inventorId;
     private int currentMakingStep;
 
-
-    public Quest(String introMessage, String questName, ArrayList quest) {
+    public Quest(String questName, String introMessage, long inventorId) {
+        this.questName = questName;
         this.introMessage = introMessage;
         this.quest = quest;
         this.questName = questName;
         this.currentMakingStep = NONE;
+    }
+
+    public Quest(String introMessage, String questName, ArrayList<Task> tasks) {
+        this.questName = questName;
+        this.introMessage = introMessage;
+        this.quest = tasks;
     }
 
     public Quest(){
