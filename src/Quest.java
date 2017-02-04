@@ -29,9 +29,9 @@ public class Quest {
     public Quest(String questName, String introMessage, long inventorId) {
         this.questName = questName;
         this.introMessage = introMessage;
-        this.quest = quest;
         this.questName = questName;
         this.currentMakingStep = NONE;
+        this.inventorId = inventorId;
     }
 
     public Quest(String introMessage, String questName, ArrayList<Task> tasks) {
@@ -41,7 +41,7 @@ public class Quest {
     }
 
     public Quest(){
-        //this.introMessage = "Quest Intro Message";
+        this.introMessage = "Quest Intro Message";
         this.questName = "QuestName";
         this.onCreating = false;
         this.inventorId = 0;
@@ -67,11 +67,13 @@ public class Quest {
 
             case NAME:{
                 this.questName = message.getText();
+                System.out.println("приветственное сообщение" + introMessage);
                 break;
             }
 
             case INTRO_MESSAGE:{
-                this.questName = message.getText();
+                this.introMessage = message.getText();
+                System.out.println("приветственное сообщение" + introMessage);
                 break;
             }
 
@@ -111,8 +113,20 @@ public class Quest {
             }
 
             case LOCATION:{
-                //todo
+
+                if (message.hasLocation()) {
+                    MyLocation location = new MyLocation();
+                    location.setLatitude(message.getLocation().getLatitude());
+                    location.setLongitude(message.getLocation().getLongitude());
+
+                    int index = quest.size() - 1;
+                    quest.get(index).setLocation(location);
+
+                    System.out.println("Задали локацию " + location.toString());
+                }
+
                 break;
+
             }
 
             default:{

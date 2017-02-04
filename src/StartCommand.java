@@ -6,6 +6,14 @@ import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Stream;
+
 
 public class StartCommand extends BotCommand {
 
@@ -31,12 +39,13 @@ public class StartCommand extends BotCommand {
 
         try{
             participants.getGroup(chat.getId()).setStep(0);
+            participants.getGroup(chat.getId()).setGroupName(null);
         } catch (Exception e){
             participants.add(chat.getId());
             BotLogger.error(LOGTAG, e);
         }
 
-        String introMessage = getInroMessage();
+        String introMessage = getIntroMessage();
 
         SendMessage message = new SendMessage();
         message.setReplyMarkup(new KeyBoards().makeOrMadeQuest());
@@ -49,31 +58,25 @@ public class StartCommand extends BotCommand {
         }
     }
 
+    private String getIntroMessage() {
 
-    private String getInroMessage() {
-        String introMessage;
+        String introMessage = "";
         String fileName = "startMessage.txt";
+        List<String> fileContent;
+        try {
+            fileContent = Files.readAllLines(Paths.get(fileName));
 
-        //todo
-
-        return "Intro Text from file";
-    }
-/*  //это код с интернета
-        try(FileReader reader = new FileReader("C:\\SomeDir\\notes3.txt"))
-        {
-            // читаем посимвольно
-            int c;
-            while((c=reader.read())!=-1){
-
-                System.out.print((char)c);
+            for (int i = 0; i < fileContent.size(); i++) {
+                introMessage = introMessage + fileContent.get(i) + "\n";
             }
-        }
-        catch(IOException ex){
 
-            System.out.println(ex.getMessage());
+        } catch (IOException e){
+            BotLogger.error(LOGTAG, e);
+            introMessage = "Intro Text";
         }
- */
 
+        return introMessage;
+    }
 }
 
 

@@ -60,7 +60,7 @@ public class Participants {
     public void setGroupName(long chatId, String groupName) throws Exception{
 
         for (int i = 0; i < participants.size(); i++){
-            //привести к нижнему регистру
+
             if (participants.get(i).getGroupName().equals(groupName)){
                 throw new Exception("The name is alredy exists.");
             }
@@ -86,5 +86,23 @@ public class Participants {
         return false;
     }
 
-    //todo
+    public void removeGroup(String groupname){
+        for (int i = 0; i < participants.size(); i++) {
+            if (participants.get(i).getGroupName() == groupname){
+                participants.remove(i);
+                break;
+            }
+        }
+    }
+
+    public void removeGroup(long chatId){
+        for (int i = 0; i < participants.size(); i++) {
+            if (participants.get(i).contains(chatId)){
+                participants.remove(i);
+                break;
+            }
+        }
+    }
+
+
 }

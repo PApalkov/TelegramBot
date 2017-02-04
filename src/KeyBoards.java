@@ -8,21 +8,22 @@ import java.util.List;
 
 public class KeyBoards {
 
-    private static ArrayList<String> questNames;
+    public static final String ALONE = Emoji.BOY + " Один " + Emoji.BOY;
+    public static final String GROUP = Emoji.FAMILY + " Команда " + Emoji.FAMILY;
+    public static final String BACK = Emoji.BACK_WITH_LEFTWARDS_ARROW_ABOVE + " Назад " + Emoji.BACK_WITH_LEFTWARDS_ARROW_ABOVE;
+    public static final String READY = Emoji.THUMBS_UP_SIGN + " Готово " + Emoji.THUMBS_UP_SIGN;
+    public static final String CANCEL = Emoji.NO_ENTRY_SIGN + " Отменить " + Emoji.NO_ENTRY_SIGN;
+    public static final String QUEST_NAME = Emoji.CHEQUERED_FLAG + " Название квеста " + Emoji.CHEQUERED_FLAG;
+    public static final String INTRO_MESSAGE = Emoji.ENVELOPE + " Приветственное сообщение " + Emoji.ENVELOPE;
+    public static final String ADD_QUEST_TASK = Emoji.BLACK_QUESTION_MARK_ORNAMENT + " Добавить задание " + Emoji.BLACK_QUESTION_MARK_ORNAMENT;
+    public static final String TASK = Emoji.BLACK_QUESTION_MARK_ORNAMENT + " Задание " + Emoji.BLACK_QUESTION_MARK_ORNAMENT;
+    public static final String ANSWER = Emoji.PARTY_POPPER + " Ответ " + Emoji.PARTY_POPPER;
+    public static final String HINT1 = Emoji.SPEECH_BALLOON + " Подсказка 1 " + Emoji.SPEECH_BALLOON;
+    public static final String HINT2 = Emoji.SPEECH_BALLOON + " Подсказка 2 " + Emoji.SPEECH_BALLOON;
+    public static final String PHOTO = Emoji.SUNRISE + " Фото " + Emoji.SUNRISE;
+    public static final String LOCATION = Emoji.ROUND_PUSHPIN + " Геолокация " + Emoji.ROUND_PUSHPIN;
 
-    public KeyBoards(){
-
-        try {
-            DBConnector.init();
-            this.questNames = DBConnector.getAllQuestsName();
-            DBConnector.closeDB();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } catch (ClassNotFoundException b){
-            System.out.println(b.getMessage());
-        }
-
-    }
+    public KeyBoards(){}
 
     public static ReplyKeyboardMarkup aloneOrGroupKeyboard(){
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
@@ -34,11 +35,11 @@ public class KeyBoards {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow firstKeyboardRow = new KeyboardRow();
-        firstKeyboardRow.add("Один");
-        firstKeyboardRow.add("Команда");
+        firstKeyboardRow.add(ALONE);
+        firstKeyboardRow.add(GROUP);
 
         KeyboardRow secondKeyboardRow = new KeyboardRow();
-        secondKeyboardRow.add("Назад");
+        secondKeyboardRow.add(BACK);
 
 
         keyboard.add(firstKeyboardRow);
@@ -59,19 +60,17 @@ public class KeyBoards {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow firstKeyboardRow = new KeyboardRow();
-        firstKeyboardRow.add("Пройти");
-        firstKeyboardRow.add("Создать");
+        firstKeyboardRow.add("Пройти квест");
+        firstKeyboardRow.add("Создать квест");
 
         KeyboardRow secondKeyboardRow = new KeyboardRow();
-        secondKeyboardRow.add("Присоединиться к команде");
+        secondKeyboardRow.add("Найти команду");
         secondKeyboardRow.add("Найти квест");
 
         keyboard.add(firstKeyboardRow);
         keyboard.add(secondKeyboardRow);
 
         keyboardMarkup.setKeyboard(keyboard);
-
-
 
         return keyboardMarkup;
     }
@@ -89,7 +88,6 @@ public class KeyBoards {
         } catch (ClassNotFoundException b) {
             System.out.println(b.getMessage());
         }
-
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
@@ -125,19 +123,19 @@ public class KeyBoards {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow questNameKeyBoardRow = new KeyboardRow();
-        questNameKeyBoardRow.add("Название квеста");
+        questNameKeyBoardRow.add(QUEST_NAME);
 
         KeyboardRow startMessageKeyBoard = new KeyboardRow();
-        startMessageKeyBoard.add("Приветственное сообщение");
+        startMessageKeyBoard.add(INTRO_MESSAGE);
 
         KeyboardRow taskKeyBoard = new KeyboardRow();
-        taskKeyBoard.add("Добавить задание");
+        taskKeyBoard.add(ADD_QUEST_TASK);
 
         KeyboardRow readyKeyBoardRow = new KeyboardRow();
-        readyKeyBoardRow.add("Готово");
+        readyKeyBoardRow.add(READY);
 
         KeyboardRow backKeyboardRow = new KeyboardRow();
-        backKeyboardRow.add("Отменить");
+        backKeyboardRow.add(CANCEL);
 
 
         keyboard.add(questNameKeyBoardRow);
@@ -162,22 +160,22 @@ public class KeyBoards {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow firstKeyboardRow = new KeyboardRow();
-        firstKeyboardRow.add("Задание");
-        firstKeyboardRow.add("Ответ");
+        firstKeyboardRow.add(TASK);
+        firstKeyboardRow.add(ANSWER);
 
         KeyboardRow secondKeyboardRow = new KeyboardRow();
-        secondKeyboardRow.add("Подсказка 1");
-        secondKeyboardRow.add("Подсказка 2");
+        secondKeyboardRow.add(HINT1);
+        secondKeyboardRow.add(HINT2);
 
         KeyboardRow thirdKeyboardRow = new KeyboardRow();
-        thirdKeyboardRow.add("Фото");
-        thirdKeyboardRow.add("Геолокация");
+        thirdKeyboardRow.add(PHOTO);
+        thirdKeyboardRow.add(LOCATION);
 
         KeyboardRow readyKeyBoardRow = new KeyboardRow();
-        readyKeyBoardRow.add("Готово");
+        readyKeyBoardRow.add(READY);
 
         KeyboardRow backKeyboardRow = new KeyboardRow();
-        backKeyboardRow.add("Назад");
+        backKeyboardRow.add(BACK);
 
         keyboard.add(firstKeyboardRow);
         keyboard.add(secondKeyboardRow);

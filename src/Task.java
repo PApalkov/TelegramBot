@@ -6,9 +6,9 @@ public class Task {
     private String hint2;
     private String photoPath;
     private String answer;
-    private Location location;
+    private MyLocation location;
 
-    public Task(int taskNumber, String task, String hint1, String hint2, String photoPath, String answer, Location location) {
+    public Task(int taskNumber, String task, String hint1, String hint2, String photoPath, String answer, MyLocation location) {
         this.taskNumber = taskNumber;
         this.task = task;
         this.hint1 = hint1;
@@ -18,7 +18,7 @@ public class Task {
         this.location = location;
     }
 
-    public Task(String task, String hint1, String hint2, String photoPath, String answer, Location location) {
+    public Task(String task, String hint1, String hint2, String photoPath, String answer, MyLocation location) {
         this.task = task;
         this.hint1 = hint1;
         this.hint2 = hint2;
@@ -33,7 +33,7 @@ public class Task {
         this.hint2 = null;
         this.photoPath = null;
         this.answer = null;
-        this.location = new Location();
+        this.location = new MyLocation();
     }
 
     public boolean checkAnswer(String answer) {
@@ -72,11 +72,11 @@ public class Task {
         this.answer = answer;
     }
 
-    public Location getLocation() {
+    public MyLocation getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(MyLocation location) {
         this.location = location;
     }
 
@@ -129,7 +129,7 @@ public class Task {
     }
 
     public boolean containsLocation(){
-        if (photoPath == null) {
+        if ( (location.getLatitude() == 0) && (location.getLongitude() == 0 ) ) {
             return false;
         } else {
             return true;

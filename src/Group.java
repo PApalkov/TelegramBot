@@ -79,8 +79,6 @@ public class Group {
         }
 
         groupQuest = null;
-
-        //todo
     }
 
     public void deleteQuest(){
