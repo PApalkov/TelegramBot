@@ -13,6 +13,7 @@ public enum Emoji {
     SUNRISE('\uD83C', '\uDF05'),
     PARTY_POPPER('\uD83C','\uDF89'),
     SPEECH_BALLOON('\uD83D', '\uDCAC'),
+    CAMERA('\uD83D', '\uDCF7'),
     // Emoticones group
 
 

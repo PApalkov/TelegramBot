@@ -1,5 +1,6 @@
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
@@ -38,8 +39,10 @@ public class StartCommand extends BotCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
 
         try{
+
             participants.getGroup(chat.getId()).setStep(0);
             participants.getGroup(chat.getId()).setGroupName(null);
+
         } catch (Exception e){
             participants.add(chat.getId());
             BotLogger.error(LOGTAG, e);
@@ -77,6 +80,7 @@ public class StartCommand extends BotCommand {
 
         return introMessage;
     }
+
 }
 
 

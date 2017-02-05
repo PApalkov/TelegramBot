@@ -82,6 +82,8 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                         if (gotMessage.hasText()) {
                             try {
 
+                                //todo проверять это место
+
                                 players.setGroupName(chatId, gotMessage.getText());
                                 players.getGroup(chatId).setStep(choosingQuest(gotMessage));
 
@@ -170,18 +172,23 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
                                     sendMessageHandle(chatId, players.getGroup(chatId).getQuest().getIntroMessage());
                                     sendTask(update.getMessage());
+                                } else {
+
+                                    markUpSendMessageHandle(chatId, "Такого квеста не существует", KeyBoards.makeOrMadeQuest());
+                                    players.getGroup(chatId).setStep(MAKE_OR_MADE_QUEST_SELECTION);
+
                                 }
                                 DBConnector.closeDB();
+
                             } catch (SQLException e) {
                                 BotLogger.error(LOGTAG, e);
-                                markUpSendMessageHandle(chatId, "Такого квеста не существует", KeyBoards.makeOrMadeQuest());
-                                players.getGroup(chatId).setStep(MAKE_OR_MADE_QUEST_SELECTION);
                             } catch (ClassNotFoundException b) {
                                 BotLogger.error(LOGTAG, b);
                             }
 
                         } else  {
-                            markUpSendMessageHandle(chatId, "Введите название квеста!", KeyBoards.makeOrMadeQuest());
+                            markUpSendMessageHandle(chatId, "ОШИБКА!", KeyBoards.makeOrMadeQuest());
+                            players.getGroup(chatId).setStep(MAKE_OR_MADE_QUEST_SELECTION);
                         }
 
                         break;
@@ -430,6 +437,8 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
                 players.remove(message.getChatId());
                 players.addToGroup(gotGroupName, message.getChatId());
+
+
 
                 sendToAll(players.getGroup(chatId), userName + " присоединился к команде!");
 

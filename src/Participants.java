@@ -59,9 +59,12 @@ public class Participants {
 
     public void setGroupName(long chatId, String groupName) throws Exception{
 
+        String exist_groupName = null;
         for (int i = 0; i < participants.size(); i++){
 
-            if (participants.get(i).getGroupName().equals(groupName)){
+            exist_groupName = participants.get(i).getGroupName();
+
+            if (exist_groupName == groupName){
                 throw new Exception("The name is alredy exists.");
             }
         }
@@ -77,9 +80,11 @@ public class Participants {
 
     public boolean hasGroup(String group){
 
+        String currGroupName = null;
         for (int i = 0; i < participants.size(); i++) {
-            //привести и то и другое к нижнему регистру
-            if (participants.get(i).getGroupName().equals(group)){
+            System.out.println(participants.get(i).getGroupName());
+            currGroupName = participants.get(i).getGroupName();
+            if ((currGroupName != null) && (currGroupName.equals(group)) ){
                 return true;
             }
         }

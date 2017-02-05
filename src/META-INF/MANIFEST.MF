@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: /Users/pavel/IdeaProjects/TelegramBot/srс/Main.java
+Main-Class: Main
+

@@ -18,10 +18,10 @@ public class KeyBoards {
     public static final String ADD_QUEST_TASK = Emoji.BLACK_QUESTION_MARK_ORNAMENT + " Добавить задание " + Emoji.BLACK_QUESTION_MARK_ORNAMENT;
     public static final String TASK = Emoji.BLACK_QUESTION_MARK_ORNAMENT + " Задание " + Emoji.BLACK_QUESTION_MARK_ORNAMENT;
     public static final String ANSWER = Emoji.PARTY_POPPER + " Ответ " + Emoji.PARTY_POPPER;
-    public static final String HINT1 = Emoji.SPEECH_BALLOON + " Подсказка 1 " + Emoji.SPEECH_BALLOON;
-    public static final String HINT2 = Emoji.SPEECH_BALLOON + " Подсказка 2 " + Emoji.SPEECH_BALLOON;
-    public static final String PHOTO = Emoji.SUNRISE + " Фото " + Emoji.SUNRISE;
-    public static final String LOCATION = Emoji.ROUND_PUSHPIN + " Геолокация " + Emoji.ROUND_PUSHPIN;
+    public static final String HINT1 = Emoji.SPEECH_BALLOON + "Подсказка 1" + Emoji.SPEECH_BALLOON;
+    public static final String HINT2 = Emoji.SPEECH_BALLOON + "Подсказка 2" + Emoji.SPEECH_BALLOON;
+    public static final String PHOTO = Emoji.CAMERA + " Фото " + Emoji.CAMERA;
+    public static final String LOCATION = Emoji.ROUND_PUSHPIN + "Геолокация" + Emoji.ROUND_PUSHPIN;
 
     public KeyBoards(){}
 
