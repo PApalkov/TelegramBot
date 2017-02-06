@@ -61,14 +61,19 @@ public class KeyBoards {
 
         KeyboardRow firstKeyboardRow = new KeyboardRow();
         firstKeyboardRow.add("Пройти квест");
-        firstKeyboardRow.add("Создать квест");
 
         KeyboardRow secondKeyboardRow = new KeyboardRow();
         secondKeyboardRow.add("Найти команду");
         secondKeyboardRow.add("Найти квест");
 
+        KeyboardRow thirdKeyboardRow = new KeyboardRow();
+        thirdKeyboardRow.add("Создать квест");
+        thirdKeyboardRow.add("Удалить квест");
+
+
         keyboard.add(firstKeyboardRow);
         keyboard.add(secondKeyboardRow);
+        keyboard.add(thirdKeyboardRow);
 
         keyboardMarkup.setKeyboard(keyboard);
 
@@ -81,13 +86,15 @@ public class KeyBoards {
 
         try {
             DBConnector.init();
-            questNames = DBConnector.getAllQuestsName();
+            questNames = DBConnector.getAdminsQuestsName();
             DBConnector.closeDB();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException b) {
             System.out.println(b.getMessage());
         }
+
+        printQNames(questNames);
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 
@@ -188,4 +195,49 @@ public class KeyBoards {
         return keyboardMarkup;
     }
 
+    public static ReplyKeyboardMarkup showHandMadeQuest(long chatId){
+        ArrayList<String> questNames = new ArrayList<String>();
+
+        try {
+            DBConnector.init();
+            questNames = DBConnector.getMadeQuestsName(chatId);
+            DBConnector.closeDB();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } catch (ClassNotFoundException b) {
+            System.out.println(b.getMessage());
+        }
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+
+        keyboardMarkup.setSelective(true);
+        keyboardMarkup.setResizeKeyboard(true);
+        keyboardMarkup.setOneTimeKeyboad(true);
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        if (questNames.size() == 0) {
+            KeyboardRow keyboardRow = new KeyboardRow();
+            keyboardRow.add("Назад");
+        } else {
+            for (int i = 0; i < questNames.size(); i++) {
+
+                KeyboardRow keyboardRow = new KeyboardRow();
+                keyboardRow.add(questNames.get(i));
+                keyboard.add(keyboardRow);
+            }
+        }
+        keyboardMarkup.setKeyboard(keyboard);
+
+        return keyboardMarkup;
+    }
+
+    private static void printQNames(ArrayList<String> names){
+
+        System.out.println(names.size() + "\n");
+
+        for (int i = 0; i < names.size(); i++) {
+            System.out.println(names.get(i) + "\n");
+        }
+    }
 }

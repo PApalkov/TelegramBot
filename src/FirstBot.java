@@ -2,7 +2,6 @@ import org.telegram.telegrambots.api.methods.send.SendLocation;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.*;
-import org.telegram.telegrambots.api.objects.Location;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -10,9 +9,11 @@ import org.telegram.telegrambots.logging.BotLogger;
 
 import java.sql.SQLException;
 
+import static org.telegram.telegrambots.logging.BotLogger.error;
+
 public class FirstBot extends TelegramLongPollingCommandBot {
 
-    public static final int MAKE_OR_MADE_QUEST_SELECTION = 0;
+    public static final int MAIN_MENU = 0;
     public static final int SINGLE_OR_GROUP_PLAYING_SELECTION = 1;
     public static final int ENTERING_GROUPNAME = 2;
     public static final int JOINING_EXISTING_GROUP = 3;
@@ -22,6 +23,9 @@ public class FirstBot extends TelegramLongPollingCommandBot {
     public static final int CHOOSING_QUEST = 7;
     public static final int QUEST_FIELDS_SELECTION = 8;
     public static final int TASK_FIELDS_SELECTION = 9;
+    public static final int DELETE_QUEST = 10;
+
+
 
     private static final String LOGTAG = "FIRSTBOT";
 
@@ -33,6 +37,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         register(new StopCommand(players));
         register(new FirstHintCommand(players));
         register(new SecondHintCommand(players));
+        register(new DeleteQuest());
         register(new HelpCommand());
 
         registerDefaultAction((absSender, message) -> {
@@ -43,7 +48,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
             try {
                 absSender.sendMessage(commandUnknownMessage);
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                error(LOGTAG, e);
             }
         });
     }
@@ -61,7 +66,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
                 switch (step) {
 
-                    case MAKE_OR_MADE_QUEST_SELECTION: {
+                    case MAIN_MENU: {
 
                         players.getGroup(chatId).setStep(makeOrMadeQuest(update.getMessage()));
                         break;
@@ -82,14 +87,12 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                         if (gotMessage.hasText()) {
                             try {
 
-                                //todo проверять это место
-
                                 players.setGroupName(chatId, gotMessage.getText());
                                 players.getGroup(chatId).setStep(choosingQuest(gotMessage));
 
                             } catch (Exception e) {
                                 sendMessageHandle(chatId, e.getMessage());
-                                BotLogger.error(LOGTAG, e);
+                                error(LOGTAG, e);
                             }
                         } else {
                             markUpSendMessageHandle(gotMessage.getChatId(), "Неверный формат!", KeyBoards.aloneOrGroupKeyboard());
@@ -167,7 +170,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                                 DBConnector.init();
                                 if (DBConnector.containsQuest(questName)) {
 
-                                    players.getGroup(chatId).setQuest(DBConnector.getQuest(questName));
+                                    players.getGroup(chatId).setQuest(DBConnector.getAllQuests(questName));
                                     players.getGroup(chatId).setStep(RUNNING_QUEST);
 
                                     sendMessageHandle(chatId, players.getGroup(chatId).getQuest().getIntroMessage());
@@ -175,24 +178,31 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                                 } else {
 
                                     markUpSendMessageHandle(chatId, "Такого квеста не существует", KeyBoards.makeOrMadeQuest());
-                                    players.getGroup(chatId).setStep(MAKE_OR_MADE_QUEST_SELECTION);
+                                    players.getGroup(chatId).setGroupName(null);
+                                    players.getGroup(chatId).setStep(MAIN_MENU);
 
                                 }
                                 DBConnector.closeDB();
 
-                            } catch (SQLException e) {
-                                BotLogger.error(LOGTAG, e);
-                            } catch (ClassNotFoundException b) {
-                                BotLogger.error(LOGTAG, b);
+                            } catch (SQLException | ClassNotFoundException e) {
+                                error(LOGTAG, e);
                             }
 
                         } else  {
                             markUpSendMessageHandle(chatId, "ОШИБКА!", KeyBoards.makeOrMadeQuest());
-                            players.getGroup(chatId).setStep(MAKE_OR_MADE_QUEST_SELECTION);
+                            players.getGroup(chatId).setStep(MAIN_MENU);
                         }
 
                         break;
                     }
+
+                    case DELETE_QUEST:{
+
+                        players.getGroup(chatId).setStep(deleteQuest(update.getMessage()));
+
+                        break;
+                    }
+
                     case RUNNING_QUEST: {
 
                         Message gotMessage = update.getMessage();
@@ -200,7 +210,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                             try {
                                 handleIncomingMessage(gotMessage);
                             } catch (TelegramApiException e) {
-                                BotLogger.error(LOGTAG, e);
+                                error(LOGTAG, e);
                             }
                         }
 
@@ -330,7 +340,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         try {
             sendLocation(sendLocation);
         } catch (TelegramApiException e){
-            BotLogger.error(LOGTAG, e);
+            error(LOGTAG, e);
         }
 
     }
@@ -362,7 +372,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
             } else if (message.getText().equals(KeyBoards.BACK)) {
 
                 markUpSendMessageHandle(message.getChatId(), "Выберите:", KeyBoards.makeOrMadeQuest());
-                return MAKE_OR_MADE_QUEST_SELECTION;
+                return MAIN_MENU;
 
             } else {
 
@@ -386,6 +396,8 @@ public class FirstBot extends TelegramLongPollingCommandBot {
             switch (text) {
                 case "Пройти квест": {
 
+                    players.getGroup(message.getChatId()).setAdminQuest(Group.ADMIN_QUEST);
+                    System.out.println("\nADMINQUEST  " + players.getGroup(message.getChatId()).isAdminQuest() + "\n");
                     markUpSendMessageHandle(message.getChatId(), "Вы будете один или в команде?", KeyBoards.aloneOrGroupKeyboard());
                     return SINGLE_OR_GROUP_PLAYING_SELECTION;
 
@@ -412,18 +424,45 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                 }
 
                 case "Найти квест": {
-                    sendMessageHandle(message.getChatId(), "Введите название квеста");
-                    return CHOOSING_QUEST;
+                    players.getGroup(message.getChatId()).setAdminQuest(Group.MADE_QUEST);
+                    System.out.println("\nADMINQUEST  " + players.getGroup(message.getChatId()).isAdminQuest() + "\n");
+                    markUpSendMessageHandle(message.getChatId(), "Вы будете один или в команде?", KeyBoards.aloneOrGroupKeyboard());
+
+                    return SINGLE_OR_GROUP_PLAYING_SELECTION;
+                }
+                case "Удалить квест":{
+
+                    try {
+
+                        DBConnector.init();
+
+                        if (DBConnector.hasMadeQuests(message.getChatId())) {
+
+                            markUpSendMessageHandle(message.getChatId(), "Выберите квест", KeyBoards.showHandMadeQuest(message.getChatId()));
+                            DBConnector.closeDB();
+
+                            return DELETE_QUEST;
+
+                        } else {
+                            sendMessageHandle(message.getChatId(), "Вы не создали ни одного квеста");
+                        }
+
+                    } catch (SQLException | ClassNotFoundException e) {
+                        error(LOGTAG, e);
+                    }
+
+                    return MAIN_MENU;
+
                 }
 
                 default: {
                     markUpSendMessageHandle(message.getChatId(), "Неверный выбор.\nПользуйтесь кнопками", KeyBoards.makeOrMadeQuest());
-                    return MAKE_OR_MADE_QUEST_SELECTION;
+                    return MAIN_MENU;
                 }
             }
         } else {
             markUpSendMessageHandle(message.getChatId(), "Неверный выбор.\nПользуйтесь кнопками", KeyBoards.makeOrMadeQuest());
-            return MAKE_OR_MADE_QUEST_SELECTION;
+            return MAIN_MENU;
         }
     }
 
@@ -451,7 +490,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
                 markUpSendMessageHandle(message.getChatId(), "Такой команды не существует", KeyBoards.makeOrMadeQuest());
 
-                return MAKE_OR_MADE_QUEST_SELECTION;
+                return MAIN_MENU;
             }
         } else {
 
@@ -463,9 +502,16 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
     private int choosingQuest(Message message){
 
-        markUpSendMessageHandle(message.getChatId(), "Выберите квест!", KeyBoards.showQuests());
+        System.out.println("\nADMINQUEST TTT  " + players.getGroup(message.getChatId()).isAdminQuest() + "\n");
+        if (players.getGroup(message.getChatId()).isAdminQuest()) {
+            markUpSendMessageHandle(message.getChatId(), "Выберите квест!", KeyBoards.showQuests());
+        } else {
+            sendMessageHandle(message.getChatId(), "Введите название квеста");
+
+        }
 
         return CHOOSING_QUEST;
+
     }
 
     private int makingQuest(Message message) {
@@ -505,9 +551,9 @@ public class FirstBot extends TelegramLongPollingCommandBot {
                         contains = DBConnector.containsQuest(questName);
                         DBConnector.closeDB();
                     } catch (ClassNotFoundException e) {
-                        BotLogger.error(LOGTAG, e);
+                        error(LOGTAG, e);
                     } catch (SQLException e) {
-                        BotLogger.error(LOGTAG, e);
+                        error(LOGTAG, e);
                     }
 
                     if (contains) {
@@ -519,14 +565,14 @@ public class FirstBot extends TelegramLongPollingCommandBot {
 
                         players.getGroup(chatId).saveQuest();
 
-                        return MAKE_OR_MADE_QUEST_SELECTION;
+                        return MAIN_MENU;
                     }
                 }
             } else if (text.equals(KeyBoards.CANCEL)){
 
                 markUpSendMessageHandle(chatId, "Вы отменили создание квеста", KeyBoards.makeOrMadeQuest());
                 players.getGroup(chatId).deleteQuest();
-                return MAKE_OR_MADE_QUEST_SELECTION;
+                return MAIN_MENU;
 
             } else {
                 markUpSendMessageHandle(message.getChatId(), "Неверный выбор.\nПользуйтесь кнопками", KeyBoards.makingQuestKeyBoard());
@@ -614,6 +660,28 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         return FILLING_TASKS;
     }
 
+    private int deleteQuest(Message message){
+
+        String questName = message.getText();
+        try {
+            DBConnector.init();
+
+            if (DBConnector.containsQuest(questName)){
+                DBConnector.deleteQuest(questName);
+                markUpSendMessageHandle(message.getChatId(), "Квест успешно удален", KeyBoards.makeOrMadeQuest());
+            } else {
+                markUpSendMessageHandle(message.getChatId(), "Holy shit has happened!!!", KeyBoards.makeOrMadeQuest());
+            }
+
+            DBConnector.closeDB();
+        } catch (SQLException | ClassNotFoundException e){
+            BotLogger.error(LOGTAG, e);
+        }
+
+
+        return MAIN_MENU;
+    }
+
     public  void sendMessageHandle(long chatId, String text){
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -622,8 +690,9 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         try {
             sendMessage(message);
         } catch (TelegramApiException e){
-            BotLogger.error(LOGTAG, e);
+            error(LOGTAG, e);
         }
+
     }
 
     public  void markUpSendMessageHandle(long chatId, String text, ReplyKeyboardMarkup replyKeyboardMarkup){
@@ -635,7 +704,7 @@ public class FirstBot extends TelegramLongPollingCommandBot {
         try {
             sendMessage(message);
         } catch (TelegramApiException e){
-            BotLogger.error(LOGTAG, e);
+            error(LOGTAG, e);
         }
     }
 

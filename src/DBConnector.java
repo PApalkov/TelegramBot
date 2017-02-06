@@ -7,13 +7,14 @@ public class DBConnector {
 
     private static Connection connection;
     private static Statement statement;
-    //private static ResultSet resultSet;
+    private static PreparedStatement stmt;
+    private static ResultSet rs;
 
     public static void init() throws SQLException, ClassNotFoundException {
         connectDB();
         createTasksDB();
         createQuestsDB();
-        createUsersDB();
+        //createUsersDB();
         createGroupsDB();
     }
 
@@ -59,6 +60,7 @@ public class DBConnector {
         System.out.println("Quests table is created or already exist.");
     }
 
+    /*
     // --------Создание таблицы пользователей--------
     private static void createUsersDB() throws ClassNotFoundException, SQLException
     {
@@ -70,6 +72,7 @@ public class DBConnector {
 
         System.out.println("Users table is created or already exist.\n");
     }
+    */
 
     private static void createGroupsDB() throws ClassNotFoundException, SQLException
     {
@@ -84,12 +87,14 @@ public class DBConnector {
     }
 
     public static void addQuest(Quest quest) throws SQLException {
-        PreparedStatement stmt = null;
-        PreparedStatement stmt1 = null;
-        Connection conn = connection;
+        stmt = null;
+        boolean isAdminsQuest = false;
+        if (quest.getInventorId() == 247579905 || quest.getInventorId() == 135354058) {
+            isAdminsQuest = true;
+        }
         try {
-            int i=0;
-            while(i<quest.getTaskNumbers()) {
+            int i = 0;
+            while (i < quest.getTaskNumbers()) {
                 stmt = connection.prepareStatement(
                         "INSERT INTO tasks " +
                                 "(questName, taskNumber, task, hint1, hint2, photoPath, answer, loc_latitude, loc_longitude) " +
@@ -106,37 +111,24 @@ public class DBConnector {
                 stmt.execute();
                 ++i;
             }
-
-            stmt1 = conn.prepareStatement("INSERT INTO quests " +
-                                                    "(introMessage, questName, isAdminsQuest, inventorID)" +
-                                                    "VALUES (?, ?, ?, ?)");
-            stmt1.setString(1, quest.getIntroMessage());
-            stmt1.setString(2, quest.getQuestName());
-            stmt1.setBoolean(3, false);
-            stmt1.setLong(4, quest.getInventorId());
-            stmt1.execute();
         } finally {
             if (stmt != null) {
                 stmt.close();
             }
-            if (stmt1 != null) {
-                stmt1.close();
+            if (rs != null) {
+                rs.close();
             }
         }
-    }
 
-    public static ArrayList<String> getAllQuestsName(boolean isAdminsQuest) throws SQLException {
-        ResultSet rs = null;
-        ArrayList<String> names = new ArrayList<>();
-        PreparedStatement stmt = null;
         try {
-            stmt = connection.prepareStatement("SELECT questName FROM quests WHERE isAdminsQuest=?");
-            stmt.setBoolean(1, isAdminsQuest);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                names.add(rs.getString(1));
-            }
+            stmt = connection.prepareStatement("INSERT INTO quests " +
+                                                    "(introMessage, questName, isAdminsQuest, inventorID)" +
+                                                    "VALUES (?, ?, ?, ?)");
+            stmt.setString(1, quest.getIntroMessage());
+            stmt.setString(2, quest.getQuestName());
+            stmt.setBoolean(3, isAdminsQuest);
+            stmt.setLong(4, quest.getInventorId());
+            stmt.execute();
 
         } finally {
             if (stmt != null) {
@@ -146,31 +138,11 @@ public class DBConnector {
                 rs.close();
             }
         }
-        return names;
     }
 
     /*
-    public Collection<String> getAllQuestsIntroMessage() throws SQLException {
-        ResultSet rs = null;
-        Collection<String> introMessages = new ArrayList<>();
-        Statement stmt = statement;
-        try {
-            rs = stmt.executeQuery("SELECT introMessage FROM quests");
-            while (rs.next()) {
-                introMessages.add(rs.getString(0));
-            }
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-        }
-        return introMessages;
-    }
-    */
-
-
     public static void addUser(User user) throws SQLException {
-        PreparedStatement stmt = null;
+        stmt = null;
         try {
             stmt = connection.prepareStatement(
                     "INSERT INTO users (chatID) VALUES (?) ");
@@ -182,10 +154,11 @@ public class DBConnector {
             }
         }
     }
+    */
 
     public static ArrayList<User> getAllUsers() throws SQLException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        stmt = null;
+        rs = null;
         ArrayList<User> users = new ArrayList<>();
         try {
             stmt = connection.prepareStatement(
@@ -205,96 +178,10 @@ public class DBConnector {
         return users;
     }
 
-    /*
-    public static Collection<Task> getAllQuests() throws ClassNotFoundException, SQLException {
-        resultSet = statement.executeQuery("SELECT * FROM quests");
-        Collection<Task> quests = new ArrayList<>();
-
-        while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String task = resultSet.getString("task");
-            String hint = resultSet.getString("hint");
-            String photo = resultSet.getString("photo");
-            String answer = resultSet.getString("answer");
-            Double latitude = resultSet.getDouble("loc_latitude");
-            Double longitude = resultSet.getDouble("loc_longitude");
-
-            quests.add(new Task(task, hint, photo, answer, new Location(latitude, longitude)));
-
-
-            System.out.println("task: " + task + "\n" +
-                                "hint: " + hint + "\n" +
-                                "photo: " + photo + "\n" +
-                                "answer: " + answer + "\n" +
-                                "location is (" + latitude + ", " + longitude + ")");
-
-            //System.out.println("End of quests table\n");
-            return quests;
-        }
-    }
-    */
-
-    /*
-    public ArrayList<User> getAllUsers() throws ClassNotFoundException, SQLException
-    {
-        resultSet = statement.executeQuery("SELECT * FROM users");
-        ArrayList<User> users = new ArrayList<>();
-
-        while(resultSet.next())
-        {
-            int id = resultSet.getInt("id");
-            long chatID = resultSet.getLong("chatID");
-            String name = resultSet.getString("name");
-            String surname = resultSet.getString("surname");
-            int groupID = resultSet.getInt("groupID");
-            users.add(new User(chatID, groupID));
-
-
-
-            System.out.println("chatID: " + chatID + "\n" +
-                    "name: " + name + "\n" +
-                    "surname: " + surname);
-
-        }
-        return users;
-        //System.out.println("End of users table\n");
-    }
-    */
-
-    /*
-    public Collection<User> getUsersFromGroup(int groupID) throws SQLException {
-        Collection<User> users = new ArrayList<>();
-
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            stmt = connection.prepareStatement(
-                    "SELECT chatID, name, surname, tasknumber" +
-                            "FROM users " +
-                            "WHERE groupID=?");
-            stmt.setInt(1, groupID);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                User st = new User(rs.getLong(0), rs.getString(1), rs.getString(2), groupID);
-                users.add(st);
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (stmt != null) {
-                stmt.close();
-            }
-        }
-
-        return users;
-    }
-    */
-
     public static Quest getQuest(String questName, boolean isAdminsQuest) throws SQLException {
         Quest quest;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        stmt = null;
+        rs = null;
         try {
             stmt = connection.prepareStatement("SELECT introMessage, inventorID FROM quests WHERE questName=? AND isAdminsQuest=?");
             stmt.setString(1, questName);
@@ -333,17 +220,34 @@ public class DBConnector {
         return quest;
     }
 
+    public static void deleteQuest(String questName) throws SQLException {
+        stmt = null;
+        try {
+            stmt = connection.prepareStatement("DELETE FROM quests WHERE questName=?");
+            stmt.setString(1, questName);
+            stmt.execute();
+
+            stmt = connection.prepareStatement("DELETE FROM tasks WHERE questName=?");
+            stmt.setString(1, questName);
+            stmt.execute();
+
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+    }
+
     public static boolean containsQuest(String questName) throws SQLException {
-        Quest quest;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        stmt = null;
+        rs = null;
         boolean contains = false;
         try {
             stmt = connection.prepareStatement("SELECT questName FROM quests");
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                System.out.println(rs.getString("questName"));
                 if (Objects.equals(rs.getString("questName"), questName)) {
                     contains = true;
                     break;
@@ -367,7 +271,8 @@ public class DBConnector {
     public static void closeDB() throws ClassNotFoundException, SQLException {
         connection.close();
         statement.close();
-        //resultSet.close();
+        stmt.close();
+        rs.close();
 
         System.out.println("DB connection closed succesfully.");
     }
@@ -414,10 +319,10 @@ public class DBConnector {
     }
     */
 
-    public static Quest getQuest(String questName) throws SQLException {
+    public static Quest getAllQuests(String questName) throws SQLException {
         Quest quest;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        stmt = null;
+        rs = null;
 
         try {
             stmt = connection.prepareStatement("SELECT introMessage, inventorID FROM quests WHERE questName=?");
@@ -456,12 +361,80 @@ public class DBConnector {
         return quest;
     }
 
-    public static ArrayList<String> getAllQuestsName() throws SQLException {
-        ResultSet rs = null;
+    public static ArrayList<String> getMadeQuestsName(long chatID) throws SQLException {
+        stmt = null;
+        rs = null;
         ArrayList<String> names = new ArrayList<>();
-        Statement stmt = statement;
+
         try {
-            rs = stmt.executeQuery("SELECT questName FROM 'quests'");
+            stmt = connection.prepareStatement("SELECT questName FROM quests WHERE inventorID=?");
+            stmt.setLong(1, chatID);
+            rs = stmt.executeQuery();
+
+            while(rs.next()) {
+                names.add(rs.getString("questName"));
+            }
+
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return names;
+    }
+
+    public static Quest getAdminsQuests(String questName) throws SQLException {
+        Quest quest;
+        stmt = null;
+        rs = null;
+
+        try {
+            stmt = connection.prepareStatement("SELECT introMessage, inventorID FROM quests WHERE questName=? AND isAdminsQuest=?");
+            stmt.setString(1, questName);
+            stmt.setBoolean(2, true);
+            rs = stmt.executeQuery();
+
+            quest = new Quest(questName, rs.getString(1), rs.getLong(2));
+
+            stmt = connection.prepareStatement("SELECT taskNumber, task, hint1, hint2, photoPath, answer, loc_latitude, loc_longitude FROM tasks WHERE questName=? ORDER BY taskNumber");
+            stmt.setString(1, questName);
+            rs = stmt.executeQuery();
+            ArrayList<Task> tasks = new ArrayList<>();
+
+            while(rs.next()) {
+                tasks.add(new Task(
+                                rs.getInt("taskNumber"),
+                                rs.getString("task"),
+                                rs.getString("hint1"),
+                                rs.getString("hint2"),
+                                rs.getString("photoPath"),
+                                rs.getString("answer"),
+                                new MyLocation(rs.getDouble("loc_latitude"), rs.getDouble("loc_longitude"))
+                        )
+                );
+            }
+            quest.setQuest(tasks);
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return quest;
+    }
+
+    public static ArrayList<String> getAllQuestsName() throws SQLException {
+        rs = null;
+        ArrayList<String> names = new ArrayList<>();
+        try {
+            rs = statement.executeQuery("SELECT questName FROM 'quests'");
             while (rs.next()) {
                 names.add(rs.getString(1));
             }
@@ -469,9 +442,77 @@ public class DBConnector {
             if (stmt != null) {
                 stmt.close();
             }
+            if (rs != null) {
+                rs.close();
+            }
         }
         return names;
     }
 
+    public static ArrayList<String> getAdminsQuestsName() throws SQLException {
+        rs = null;
+        ArrayList<String> names = new ArrayList<>();
+        stmt = null;
+        try {
+            stmt = connection.prepareStatement("SELECT questName FROM quests WHERE isAdminsQuest=?");
+            stmt.setBoolean(1, true);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                names.add(rs.getString(1));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+        }
+        return names;
+    }
+
+    public static ArrayList<String> getNotAdminsQuestsName() throws SQLException {
+        rs = null;
+        ArrayList<String> names = new ArrayList<>();
+        stmt = null;
+        try {
+            stmt = connection.prepareStatement("SELECT questName FROM 'quests' WHERE isAdminsQuest=?");
+            stmt.setBoolean(1, false);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                names.add(rs.getString(1));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+        }
+        return names;
+    }
+
+    public static boolean hasMadeQuests(long chatID) throws SQLException {
+        rs = null;
+        boolean made = false;
+        stmt = null;
+        try {
+            stmt = connection.prepareStatement("SELECT questName FROM quests WHERE inventorID=?");
+            stmt.setLong(1, chatID);
+            rs = stmt.executeQuery();
+            if (rs != null) {
+                made = true;
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+        }
+        return made;
+    }
 
 }

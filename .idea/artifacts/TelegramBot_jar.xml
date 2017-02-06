@@ -8,9 +8,9 @@
       <element id="module-output" name="TelegramBot" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libraries/sqlite-jdbc-3.7.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libraries/telegrambots.jar" path-in-jar="/" />
-      <element id="file-copy" path="$PROJECT_DIR$/startMessage.txt" />
-      <element id="file-copy" path="$PROJECT_DIR$/DataBase.s3db" />
-      <element id="file-copy" path="$PROJECT_DIR$/helpMessage.txt" />
+      <element id="file-copy" path="$PROJECT_DIR$/out/artifacts/TelegramBot_jar/DataBase.s3db" />
+      <element id="file-copy" path="$PROJECT_DIR$/out/artifacts/TelegramBot_jar/helpMessage.txt" />
+      <element id="file-copy" path="$PROJECT_DIR$/out/artifacts/TelegramBot_jar/startMessage.txt" />
     </root>
   </artifact>
 </component>

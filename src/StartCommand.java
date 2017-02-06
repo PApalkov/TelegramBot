@@ -40,12 +40,17 @@ public class StartCommand extends BotCommand {
 
         try{
 
-            participants.getGroup(chat.getId()).setStep(0);
-            participants.getGroup(chat.getId()).setGroupName(null);
+            if (participants.contains(chat.getId())) {
+                participants.getGroup(chat.getId()).setStep(0);
+                participants.getGroup(chat.getId()).setGroupName(null);
+            } else {
+                participants.add(chat.getId());
+            }
 
         } catch (Exception e){
-            participants.add(chat.getId());
+
             BotLogger.error(LOGTAG, e);
+
         }
 
         String introMessage = getIntroMessage();

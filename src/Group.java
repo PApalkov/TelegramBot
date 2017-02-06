@@ -3,6 +3,9 @@ import java.util.ArrayList;
 
 public class Group {
 
+    public static boolean ADMIN_QUEST = true;
+    public static boolean MADE_QUEST = false;
+
     DBConnector db = new DBConnector();
 
     private String groupName;
@@ -11,6 +14,8 @@ public class Group {
     private int taskNum;
     private int step;
     private Quest groupQuest;
+
+    private boolean isAdminQuest = false;
 
     public Group() {
         this.groupName = "None";
@@ -201,7 +206,12 @@ public class Group {
         return false;
     }
 
+    public boolean isAdminQuest() {
+        return isAdminQuest;
+    }
 
-
+    public void setAdminQuest(boolean adminQuest) {
+        isAdminQuest = adminQuest;
+    }
 }
 
